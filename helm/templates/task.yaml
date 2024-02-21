@@ -19,7 +19,8 @@ spec:
   params:
     - name: SONAR_URL
       description: Host URL where the sonarqube server is running
-      default: ""
+      default: "NA"
+      optional: true
     - name: SONAR_PROJECT_KEY
       description: Project's unique key
       default: ""
@@ -41,6 +42,12 @@ spec:
             secretKeyRef:
               name: $(params.SONAR_CREDS_SECRET_NAME)
               key: password
+        - name: SONAR_URL
+          valueFrom:
+            secretKeyRef:
+              name: $(params.SONAR_CREDS_SECRET_NAME)
+              key: url
+              optional: true
       script: |
         #!/usr/bin/env bash
         replaceValues() {
@@ -59,8 +66,12 @@ spec:
         }
         
         if [[ -f $(workspaces.source.path)/sonar-project.properties ]]; then
-          if [[ -n "$(params.SONAR_URL)" ]]; then
+          if [[ $(params.SONAR_URL)" != "NA" ]]; then
             replaceValues $(workspaces.source.path)/sonar-project.properties sonar.host.url $(params.SONAR_URL)
+          else 
+            if [[ -n "${SONAR_URL}" ]]; then
+              replaceValues $(workspaces.source.path)/sonar-project.properties sonar.host.url ${SONAR_URL}   
+            fi
           fi
           if [[ -n "$(params.SONAR_PROJECT_KEY)" ]]; then
             replaceValues $(workspaces.source.path)/sonar-project.properties sonar.projectKey $(params.SONAR_PROJECT_KEY)
