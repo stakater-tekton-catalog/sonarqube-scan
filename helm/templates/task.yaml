@@ -66,7 +66,7 @@ spec:
         }
         
         if [[ -f $(workspaces.source.path)/sonar-project.properties ]]; then
-          if [[ $(params.SONAR_URL)" != "NA" ]]; then
+          if [[ "$(params.SONAR_URL)" != "NA" ]]; then
             replaceValues $(workspaces.source.path)/sonar-project.properties sonar.host.url $(params.SONAR_URL)
           else 
             if [[ -n "${SONAR_URL}" ]]; then
