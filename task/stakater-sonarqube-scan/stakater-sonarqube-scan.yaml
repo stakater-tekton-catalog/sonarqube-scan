@@ -5,7 +5,7 @@ kind: Task
 metadata:
   name: stakater-sonarqube-scan
   labels:
-    app.kubernetes.io/version: "0.0.14"
+    app.kubernetes.io/version: "0.0.15"
 spec:
   description: >-
     The following task can be used to perform static analysis on the source code
@@ -68,7 +68,7 @@ spec:
         }
         
         if [[ -f $(workspaces.source.path)/sonar-project.properties ]]; then
-          if [[ $(params.SONAR_URL)" != "NA" ]]; then
+          if [[ "$(params.SONAR_URL)" != "NA" ]]; then
             replaceValues $(workspaces.source.path)/sonar-project.properties sonar.host.url $(params.SONAR_URL)
           else 
             if [[ -n "${SONAR_URL}" ]]; then
