@@ -29,7 +29,7 @@ spec:
       default: "sonar-creds"
   steps:
     - name: sonar-properties
-      image: registry.access.redhat.com/ubi8/ubi-minimal:8.9-1029
+      image: registry.access.redhat.com/ubi8/ubi-minimal:8.9-1137
       workingDir: $(workspaces.source.path)
       env:
         - name: SONAR_USERNAME
@@ -88,4 +88,12 @@ spec:
       image: ghcr.io/stakater/pipeline-toolbox:v0.0.37
       workingDir: $(workspaces.source.path)
       command:
-        - sonar-scanner
+        - /bin/bash
+      args:
+        - -c
+        - |
+          if [ -f "pom.xml" ]
+          then
+            mvn -f pom.xml clean package
+          fi
+          sonar-scanner
