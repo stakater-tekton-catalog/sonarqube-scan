@@ -5,7 +5,7 @@ kind: Task
 metadata:
   name: stakater-sonarqube-scan
   labels:
-    app.kubernetes.io/version: "0.0.18"
+    app.kubernetes.io/version: "0.0.19"
 spec:
   description: >-
     The following task can be used to perform static analysis on the source code
@@ -31,7 +31,7 @@ spec:
       default: "sonar-creds"
     - name: SONAR_PROPERTIES_FILE_PATH
       description: Sonar properties file path
-      default: "sonar-project.properties"
+      default: ./
   steps:
     - name: sonar-properties
       image: registry.access.redhat.com/ubi8/ubi-minimal:8.9-1137
@@ -70,20 +70,20 @@ spec:
           fi
         }
         
-        if [[ -f $(workspaces.source.path)/$(params.SONAR_PROPERTIES_FILE_PATH) ]]; then
+        if [[ -f $(workspaces.source.path)/$(params.SONAR_PROPERTIES_FILE_PATH)/sonar-project.properties ]]; then
           if [[ "$(params.SONAR_URL)" != "NA" ]]; then
-            replaceValues $(workspaces.source.path)/$(params.SONAR_PROPERTIES_FILE_PATH) sonar.host.url $(params.SONAR_URL)
+            replaceValues $(workspaces.source.path)/$(params.SONAR_PROPERTIES_FILE_PATH)/sonar-project.properties sonar.host.url $(params.SONAR_URL)
           else 
             if [[ -n "${SONAR_URL}" ]]; then
-              replaceValues $(workspaces.source.path)/$(params.SONAR_PROPERTIES_FILE_PATH) sonar.host.url ${SONAR_URL}   
+              replaceValues $(workspaces.source.path)/$(params.SONAR_PROPERTIES_FILE_PATH)/sonar-project.properties sonar.host.url ${SONAR_URL}   
             fi
           fi
           if [[ -n "$(params.SONAR_PROJECT_KEY)" ]]; then
-            replaceValues $(workspaces.source.path)/$(params.SONAR_PROPERTIES_FILE_PATH) sonar.projectKey $(params.SONAR_PROJECT_KEY)
+            replaceValues $(workspaces.source.path)/$(params.SONAR_PROPERTIES_FILE_PATH)/sonar-project.properties sonar.projectKey $(params.SONAR_PROJECT_KEY)
           fi
         
-          replaceValues $(workspaces.source.path)/$(params.SONAR_PROPERTIES_FILE_PATH) sonar.login $SONAR_USERNAME
-          replaceValues $(workspaces.source.path)/$(params.SONAR_PROPERTIES_FILE_PATH) sonar.password $SONAR_PASSWORD
+          replaceValues $(workspaces.source.path)/$(params.SONAR_PROPERTIES_FILE_PATH)/sonar-project.properties sonar.login $SONAR_USERNAME
+          replaceValues $(workspaces.source.path)/$(params.SONAR_PROPERTIES_FILE_PATH)/sonar-project.properties sonar.password $SONAR_PASSWORD
         
         else
           echo "No sonar-project.properties found"
@@ -101,4 +101,5 @@ spec:
           then
             mvn -f pom.xml clean package
           fi
+          cd $(params.SONAR_PROPERTIES_FILE_PATH)
           sonar-scanner
