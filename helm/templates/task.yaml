@@ -32,7 +32,7 @@ spec:
       default: ./
   steps:
     - name: sonar-properties
-      image: ghcr.io/stakater/pipeline-toolbox:v0.0.40
+      image: ghcr.io/stakater/pipeline-toolbox:v0.0.41
       workingDir: $(workspaces.source.path)
       env:
         - name: SONAR_USERNAME
@@ -88,7 +88,7 @@ spec:
           exit 128
         fi
     - name: sonar-scan
-      image: ghcr.io/stakater/pipeline-toolbox:v0.0.40
+      image: ghcr.io/stakater/pipeline-toolbox:v0.0.41
       workingDir: $(workspaces.source.path)
       command:
         - /bin/bash
