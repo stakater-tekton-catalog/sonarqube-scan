@@ -89,6 +89,11 @@ spec:
         fi
     - name: sonar-scan
       image: ghcr.io/stakater/pipeline-toolbox:v0.0.41
+      env:
+        - name: LANG
+          value: C.UTF-8 
+        - name: LC_ALL
+          value: C.UTF-8 
       workingDir: $(workspaces.source.path)
       command:
         - /bin/bash
